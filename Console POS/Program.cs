@@ -36,9 +36,11 @@ namespace Console_POS
             25
         };
 
+
         // Cart to hold selected items
         static string[] cartItems = new string[100];
         static decimal[] cartQuantities = new decimal[100];
+
 
         static void Main(string[] args)
         {
@@ -52,6 +54,7 @@ namespace Console_POS
                         // Add Item
                         AddItemToCart();
                         break;
+
                     case 2:
                         // Remove Item
                         RemoveItemFromCart();
@@ -64,12 +67,13 @@ namespace Console_POS
 
                     case 4:
                         // Checkout
+                        Checkout();
                         break;
+
                     case 5:
                         // Exit
                         Console.WriteLine("Exiting the program. Goodbye!");
                         return;
-
 
                     default:
                         Console.WriteLine("Invalid option. Please try again.");
@@ -79,7 +83,6 @@ namespace Console_POS
 
             }
         }
-
 
         private static int DisplayMenu()
         {
@@ -113,7 +116,6 @@ namespace Console_POS
             Console.WriteLine("-------------------------------");
 
         }
-
 
         static void AddItemToCart()
         {
@@ -149,7 +151,6 @@ namespace Console_POS
             Console.WriteLine($"Added {items[choice - 1]} to the cart.");
         }
 
-
         static void ViewCart()
         {
             Console.Clear();
@@ -172,6 +173,7 @@ namespace Console_POS
             Console.WriteLine("-------------------------------");
             Console.WriteLine($" Total: P{total}");
             Console.ReadKey();
+
         }
 
         static void RemoveItemFromCart()
@@ -202,5 +204,56 @@ namespace Console_POS
             cartQuantities[choice - 1] = 0;
             Console.WriteLine("Item removed from the cart.");
         }
+
+        static void Checkout()
+        {
+            Console.Clear();
+            Console.WriteLine("-------------------------------");
+            Console.WriteLine("          CHECKOUT");
+            Console.WriteLine("-------------------------------");
+            decimal total = 0;
+
+            for (int i = 0; i < cartItems.Length; i++)
+            {
+                if (!string.IsNullOrEmpty(cartItems[i]))
+                {
+                    decimal itemTotal = prices[i] * cartQuantities[i];
+                    total += itemTotal;
+                    Console.WriteLine($" {cartItems[i],-15} x{cartQuantities[i],-5} - P{itemTotal}");
+                }
+            }
+
+            if (total == 0)
+            {
+                Console.WriteLine("\nYour cart is empty. Please add items before checking out.");
+                Console.WriteLine("\n-------------------------------");
+                Console.ReadKey();
+                return;
+            }
+
+            Console.WriteLine("-------------------------------");
+            Console.WriteLine($" Total: P{total}");
+            Console.WriteLine("Enter payment amount: ");
+
+            decimal payment;
+            while (!decimal.TryParse(Console.ReadLine(), out payment) || payment < total)
+            {
+                Console.WriteLine("Invalid payment amount. Please try again.");
+            }
+
+            decimal change = payment - total;
+            Console.WriteLine($" Change: P{change}");
+
+            Console.WriteLine("-------------------------------");
+            Console.WriteLine("  Thank you for your purchase!");
+            Console.WriteLine("-------------------------------");
+
+            Console.ReadKey();
+            // Clear the cart after checkout
+            Array.Clear(cartItems, 0, cartItems.Length);
+            Array.Clear(cartQuantities, 0, cartQuantities.Length);
+
         }
+    }
+
 }
